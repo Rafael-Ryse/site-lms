@@ -214,64 +214,6 @@
     window.addEventListener('scroll', onScroll, {passive:true});
   })();
 
-  // Background crossfade — the branded video owns the first screen; the data mesh
-  // takes over from the second section on, dissolving smoothly as you scroll.
-  (function(){
-    var v = document.getElementById('bgOverlay');
-    var veil = document.querySelector('.bg-veil');
-    var mesh = document.getElementById('bgMesh');
-    if(!v || !mesh) return;
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function tryPlay(){
-      var p = v.play();
-      if(p && p.catch) p.catch(function(){});
-    }
-    if(!reduceMotion){
-      tryPlay();
-      window.addEventListener('load', tryPlay);
-      document.addEventListener('touchstart', tryPlay, {once:true});
-      document.addEventListener('click', tryPlay, {once:true});
-    }
-
-    var heroEnd = 800;
-    function measure(){
-      var hero = document.querySelector('.hero');
-      if(hero) heroEnd = hero.getBoundingClientRect().bottom + window.scrollY;
-    }
-
-    var ticking = false;
-    function update(){
-      ticking = false;
-      if(reduceMotion){
-        mesh.style.opacity = 1;
-        if(veil) veil.style.opacity = 0;
-        return;
-      }
-      var y = window.scrollY;
-      var start = heroEnd * 0.35;               // fade begins about a third into the hero scroll
-      var end = heroEnd * 0.95;                 // completes right as the second section arrives
-      var p = (y - start) / Math.max(end - start, 1);
-      p = Math.max(0, Math.min(1, p));
-
-      v.style.opacity = (1 - p).toFixed(3);
-      if(veil) veil.style.opacity = (1 - p).toFixed(3);
-      mesh.style.opacity = p.toFixed(3);
-
-      // save battery: pause the video while it's fully hidden
-      if(p >= 1){ if(!v.paused) v.pause(); }
-      else { if(v.paused) tryPlay(); }
-    }
-    function onScroll(){
-      if(!ticking){ ticking = true; requestAnimationFrame(update); }
-    }
-
-    measure();
-    update();
-    window.addEventListener('scroll', onScroll, {passive:true});
-    window.addEventListener('resize', function(){ measure(); update(); });
-    window.addEventListener('load', function(){ measure(); update(); });
-  })();
 
   // Hero diagnostic terminal — typewriter effect
   (function(){
