@@ -33,6 +33,15 @@
         s.src = base + f; s.type = types[f.split('.').pop()];
         v.appendChild(s);
       });
+
+      var SPEED = 0.6;   // velocidade do vídeo: 1 = normal, 0.5 = metade
+      v.defaultPlaybackRate = SPEED;
+      v.playbackRate = SPEED;
+      v.addEventListener('loadeddata', function(){
+        v.playbackRate = SPEED;
+        var p = v.play(); if(p && p.catch) p.catch(function(){});   // tenta tocar assim que houver dados
+      });
+
       v.load();
     })();
   </script>
